@@ -135,8 +135,8 @@ class TestRequestStatsWithWebserver(WebserverTestCase):
             host = "http://127.0.0.1:%i" % self.port
         l = MyLocust()
         path = "/no_content_length"
-        r = l.client.get(path, prefetch=False)
-        self.assertEqual(0, global_stats.get(path, "GET").avg_content_length)
+        r = l.client.get(path, stream=True)
+        self.assertEqual(0, RequestStats.get("GET", path).avg_content_length)
     
     def test_request_stats_named_endpoint(self):
         class MyLocust(Locust):
@@ -225,4 +225,4 @@ class TestInspectLocust(unittest.TestCase):
         self.assertEqual(0.25, ratio["MyTaskSet"]["tasks"]["MySubTaskSet"]["ratio"])
         self.assertEqual(0.125, ratio["MyTaskSet"]["tasks"]["MySubTaskSet"]["tasks"]["task1"]["ratio"])
         self.assertEqual(0.125, ratio["MyTaskSet"]["tasks"]["MySubTaskSet"]["tasks"]["task2"]["ratio"])
-        
+
